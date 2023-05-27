@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model detail_transaksi {
+  id           Int       @id @default(autoincrement())
+  id_transaksi Int
+  id_produk    Int
+  jumlah       Int
+  sub_total    Int
+  produk       produk    @relation(fields: [id_produk], references: [id], onUpdate: Restrict, map: "detail_transaksi_ibfk_1")
+  transaksi    transaksi @relation(fields: [id_transaksi], references: [id], onUpdate: Restrict, map: "detail_transaksi_ibfk_2")
+
+  @@index([id_produk], map: "id_produk")
+  @@index([id_transaksi], map: "id_transaksi")
+}
+
+model pelanggan {
+  id        Int         @id @default(autoincrement())
+  nama      String      @db.VarChar(30)
+  alamat    String      @db.VarChar(100)
+  no_hp     String      @db.VarChar(13)
+  transaksi transaksi[]
+}
+
+model pengguna {
+  id           Int         @id @default(autoincrement())
+  username     String      @unique(map: "username") @db.VarChar(20)
+  email        String      @unique(map: "email") @db.VarChar(30)
+  password     String      @db.VarChar(100)
+  sessionToken String?     @db.VarChar(400)
+  role         String      @db.VarChar(11)
+  logs         logs[]
+  transaksi    transaksi[]
+}
+
+model produk {
+  id               Int                @id @default(autoincrement())
+  id_kategori      Int
+  nama             String             @db.VarChar(30)
+  harga_modal      Int
+  harga_jual       Int
+  harga_grosir     Int?
+  stok             Int
+  detail_transaksi detail_transaksi[]
+  kategori_produk  kategori_produk    @relation(fields: [id_kategori], references: [id], onUpdate: Restrict, map: "produk_ibfk_1")
+
+  @@index([id_kategori], map: "id_kategori")
+}
+
+model transaksi {
+  id                Int                @id @default(autoincrement())
+  tanggal           DateTime           @db.DateTime(0)
+  total_harga       Int
+  metode_pembayaran String             @db.VarChar(20)
+  id_pengguna       Int
+  id_pelanggan      Int?
+  status            String             @db.VarChar(10)
+  detail_transaksi  detail_transaksi[]
+  pelanggan         pelanggan?         @relation(fields: [id_pelanggan], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "transaksi_ibfk_1")
+  pengguna          pengguna           @relation(fields: [id_pengguna], references: [id], onUpdate: Restrict, map: "transaksi_ibfk_2")
+
+  @@index([id_pengguna], map: "id_pengguna")
+  @@index([id_pelanggan], map: "transaksi_ibfk_1")
+}
+
+model kategori_produk {
+  id     Int      @id @default(autoincrement())
+  nama   String   @db.VarChar(30)
+  produk produk[]
+}
+
+model logs {
+  id          Int      @id @default(autoincrement())
+  tanggal     DateTime @db.DateTime(0)
+  id_pengguna Int
+  aksi        String   @db.VarChar(20)
+  pengguna    pengguna @relation(fields: [id_pengguna], references: [id], onUpdate: Restrict, map: "logs_ibfk_1")
+
+  @@index([id_pengguna], map: "id_pengguna")
+}
