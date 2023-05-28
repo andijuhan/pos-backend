@@ -63,6 +63,24 @@ export const isOwnerOrAdmin = (
    }
 };
 
+export const isOwner = (
+   req: express.Request,
+   res: express.Response,
+   next: express.NextFunction
+) => {
+   try {
+      const currentUserRole = get(req, 'identity.role');
+
+      if (currentUserRole !== 'owner') {
+         return res.sendStatus(403);
+      }
+
+      next();
+   } catch (error) {
+      console.log(error);
+   }
+};
+
 export const isAuthenticated = async (
    req: express.Request,
    res: express.Response,

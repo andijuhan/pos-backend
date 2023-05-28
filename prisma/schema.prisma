@@ -8,13 +8,13 @@ datasource db {
 }
 
 model detail_transaksi {
-  id           Int       @id @default(autoincrement())
-  id_transaksi Int
+  id           Int        @id @default(autoincrement())
+  id_transaksi Int?
   id_produk    Int
   jumlah       Int
-  sub_total    Int
-  produk       produk    @relation(fields: [id_produk], references: [id], onUpdate: Restrict, map: "detail_transaksi_ibfk_1")
-  transaksi    transaksi @relation(fields: [id_transaksi], references: [id], onUpdate: Restrict, map: "detail_transaksi_ibfk_2")
+  total_harga  Int
+  produk       produk     @relation(fields: [id_produk], references: [id], onUpdate: Restrict, map: "detail_transaksi_ibfk_1")
+  transaksi    transaksi? @relation(fields: [id_transaksi], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "detail_transaksi_ibfk_2")
 
   @@index([id_produk], map: "id_produk")
   @@index([id_transaksi], map: "id_transaksi")
@@ -55,9 +55,9 @@ model produk {
 
 model transaksi {
   id                Int                @id @default(autoincrement())
-  tanggal           DateTime           @db.DateTime(0)
-  total_harga       Int
-  metode_pembayaran String             @db.VarChar(20)
+  tanggal           DateTime?          @default(now()) @db.DateTime(0)
+  sub_total         Int?
+  metode_pembayaran String?            @db.VarChar(20)
   id_pengguna       Int
   id_pelanggan      Int?
   status            String             @db.VarChar(10)
@@ -76,11 +76,11 @@ model kategori_produk {
 }
 
 model logs {
-  id          Int      @id @default(autoincrement())
-  tanggal     DateTime @db.DateTime(0)
+  id          Int       @id @default(autoincrement())
+  tanggal     DateTime? @default(now()) @db.DateTime(0)
   id_pengguna Int
-  aksi        String   @db.VarChar(20)
-  pengguna    pengguna @relation(fields: [id_pengguna], references: [id], onUpdate: Restrict, map: "logs_ibfk_1")
+  aksi        String    @db.VarChar(200)
+  pengguna    pengguna  @relation(fields: [id_pengguna], references: [id], onUpdate: Restrict, map: "logs_ibfk_1")
 
   @@index([id_pengguna], map: "id_pengguna")
 }

@@ -9,24 +9,6 @@ export const getAllUsers = async (
       const users = await prisma.pengguna.findMany({
          select: {
             username: true,
-         },
-      });
-
-      return res.status(200).json(users).end();
-   } catch (error) {
-      console.log(error);
-      return res.sendStatus(400);
-   }
-};
-
-export const getAllUserDetails = async (
-   req: express.Request,
-   res: express.Response
-) => {
-   try {
-      const users = await prisma.pengguna.findMany({
-         select: {
-            username: true,
             email: true,
             role: true,
          },

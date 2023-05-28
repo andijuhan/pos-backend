@@ -1,11 +1,15 @@
 import express from 'express';
 import prisma from '../../prisma/prisma';
+import { get } from 'lodash';
 
 export const addProduct = async (
    req: express.Request,
    res: express.Response
 ) => {
    try {
+      const currentUserId = get(req, 'identity.id');
+      const currentUserRole = get(req, 'identity.role');
+
       const {
          categoryId,
          productName,
@@ -43,6 +47,15 @@ export const addProduct = async (
          },
       });
 
+      if (currentUserRole === 'admin') {
+         await prisma.logs.create({
+            data: {
+               id_pengguna: currentUserId,
+               aksi: `menambah produk ${productName}`,
+            },
+         });
+      }
+
       return res.status(200).json(addProduct);
    } catch (error) {
       console.log('gagal menambahkan produk : ' + error);
@@ -69,6 +82,9 @@ export const updateProduct = async (
    res: express.Response
 ) => {
    try {
+      const currentUserId = get(req, 'identity.id');
+      const currentUserRole = get(req, 'identity.role');
+
       const { id } = req.params;
       const {
          categoryId,
@@ -103,6 +119,14 @@ export const updateProduct = async (
          },
       });
 
+      if (currentUserRole === 'admin') {
+         await prisma.logs.create({
+            data: {
+               id_pengguna: currentUserId,
+               aksi: `update data produk ${productName}`,
+            },
+         });
+      }
       return res.status(200).json(updateProduct).end();
    } catch (error) {
       console.log('gagal update data produk : ' + error);
@@ -115,6 +139,9 @@ export const deleteProduct = async (
    res: express.Response
 ) => {
    try {
+      const currentUserId = get(req, 'identity.id');
+      const currentUserRole = get(req, 'identity.role');
+
       const { id } = req.params;
 
       if (!id) {
@@ -126,6 +153,15 @@ export const deleteProduct = async (
             id: Number(id),
          },
       });
+
+      if (currentUserRole === 'admin') {
+         await prisma.logs.create({
+            data: {
+               id_pengguna: currentUserId,
+               aksi: `menghapus produk ${deleteProduct.nama}`,
+            },
+         });
+      }
 
       return res.status(200).json(deleteProduct).end();
    } catch (error) {

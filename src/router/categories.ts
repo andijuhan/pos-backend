@@ -8,26 +8,16 @@ import {
 import { isAuthenticated, isOwnerOrAdmin } from '../middlewares';
 
 export default (router: express.Router) => {
-   router.get(
-      '/admin/categories',
-      isAuthenticated,
-      isOwnerOrAdmin,
-      getAllCategory
-   );
-   router.post(
-      '/admin/categories',
-      isAuthenticated,
-      isOwnerOrAdmin,
-      addCategory
-   );
+   router.get('/categories', isAuthenticated, isOwnerOrAdmin, getAllCategory);
+   router.post('/categories', isAuthenticated, isOwnerOrAdmin, addCategory);
    router.delete(
-      '/admin/categories/:id',
+      '/categories/:id',
       isAuthenticated,
       isOwnerOrAdmin,
       deleteCategory
    );
    router.patch(
-      '/admin/categories/:id',
+      '/categories/:id',
       isAuthenticated,
       isOwnerOrAdmin,
       updateCategory

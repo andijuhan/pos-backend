@@ -8,21 +8,16 @@ import {
 import { isAuthenticated, isOwnerOrAdmin } from '../middlewares';
 
 export default (router: express.Router) => {
-   router.get(
-      '/admin/products',
-      isAuthenticated,
-      isOwnerOrAdmin,
-      getAllProducts
-   );
-   router.post('/admin/products', isAuthenticated, isOwnerOrAdmin, addProduct);
+   router.get('/products', isAuthenticated, isOwnerOrAdmin, getAllProducts);
+   router.post('/products', isAuthenticated, isOwnerOrAdmin, addProduct);
    router.patch(
-      '/admin/products/:id',
+      '/products/:id',
       isAuthenticated,
       isOwnerOrAdmin,
       updateProduct
    );
    router.delete(
-      '/admin/products/:id',
+      '/products/:id',
       isAuthenticated,
       isOwnerOrAdmin,
       deleteProduct
