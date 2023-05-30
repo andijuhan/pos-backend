@@ -1,5 +1,6 @@
 import express from 'express';
 import prisma from '../../prisma/prisma';
+import { hashPassword } from '../helpers';
 
 export const getAllUsers = async (
    req: express.Request,
@@ -41,15 +42,39 @@ export const deleteUser = async (
    }
 };
 
+export const addUser = async (req: express.Request, res: express.Response) => {
+   try {
+      const { username, email, password, role } = req.body;
+
+      if (!username || !email || !password || !role) {
+         return res.sendStatus(400);
+      }
+
+      const addUser = await prisma.pengguna.create({
+         data: {
+            username,
+            email,
+            password: await hashPassword(password),
+            role,
+         },
+      });
+
+      return res.status(200).json(addUser).end();
+   } catch (error) {
+      console.log('gagal menambahkan user : ' + error);
+      return res.sendStatus(400);
+   }
+};
+
 export const updateUser = async (
    req: express.Request,
    res: express.Response
 ) => {
    try {
       const { id } = req.params;
-      const { username } = req.body;
+      const { username, email, password, role } = req.body;
 
-      if (!username) {
+      if (!username || !email || !password || !role) {
          return res.sendStatus(400);
       }
 
@@ -59,6 +84,9 @@ export const updateUser = async (
          },
          data: {
             username,
+            email,
+            password: await hashPassword(password),
+            role,
          },
       });
 
