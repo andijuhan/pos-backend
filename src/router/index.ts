@@ -4,6 +4,7 @@ import users from './users';
 import categories from './categories';
 import products from './products';
 import transaction from './transaction';
+import detailTransaction from './detailTransaction';
 
 const router = express.Router();
 
@@ -13,5 +14,6 @@ export default (): express.Router => {
    categories(router);
    products(router);
    transaction(router);
+   detailTransaction(router);
    return router;
 };

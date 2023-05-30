@@ -6,15 +6,15 @@ export const addCategory = async (
    res: express.Response
 ) => {
    try {
-      const { categoryName } = req.body;
+      const { nama } = req.body;
 
-      if (!categoryName) {
+      if (!nama) {
          return res.sendStatus(400);
       }
 
       const isCategoryExist = await prisma.kategori_produk.findFirst({
          where: {
-            nama: categoryName,
+            nama,
          },
       });
 
@@ -27,7 +27,7 @@ export const addCategory = async (
 
       const addCategory = await prisma.kategori_produk.create({
          data: {
-            nama: categoryName,
+            nama,
          },
       });
 
@@ -57,9 +57,9 @@ export const updateCategory = async (
 ) => {
    try {
       const { id } = req.params;
-      const { categoryName } = req.body;
+      const { categoryName: nama } = req.body;
 
-      if (!id || !categoryName) {
+      if (!id || !nama) {
          return res.sendStatus(400);
       }
 
@@ -68,7 +68,7 @@ export const updateCategory = async (
             id: Number(id),
          },
          data: {
-            nama: categoryName,
+            nama,
          },
       });
 

@@ -71,8 +71,8 @@ export const register = async (req: express.Request, res: express.Response) => {
 
       const user = await prisma.pengguna.create({
          data: {
-            username: username,
-            email: email,
+            username,
+            email,
             password: await hashPassword(password),
             role: 'user',
          },

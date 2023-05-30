@@ -10,22 +10,16 @@ export const addProduct = async (
       const currentUserId = get(req, 'identity.id');
       const currentUserRole = get(req, 'identity.role');
 
-      const {
-         categoryId,
-         productName,
-         capitalPrice,
-         sellingPrice,
-         wholeSalePrice,
-         stock,
-      } = req.body;
+      const { id_kategori, nama, harga_modal, harga_jual, harga_grosir, stok } =
+         req.body;
 
-      if (!categoryId || !productName || !capitalPrice || !sellingPrice) {
+      if (!id_kategori || !nama || !harga_modal || !harga_jual) {
          return res.sendStatus(400);
       }
 
       const isProductNameExist = await prisma.produk.findFirst({
          where: {
-            nama: productName,
+            nama,
          },
       });
 
@@ -38,20 +32,21 @@ export const addProduct = async (
 
       const addProduct = await prisma.produk.create({
          data: {
-            id_kategori: categoryId,
-            nama: productName,
-            harga_modal: capitalPrice,
-            harga_jual: sellingPrice,
-            harga_grosir: wholeSalePrice,
-            stok: stock,
+            id_kategori,
+            nama,
+            harga_modal,
+            harga_jual,
+            harga_grosir,
+            stok,
          },
       });
 
+      //add logs
       if (currentUserRole === 'admin') {
          await prisma.logs.create({
             data: {
                id_pengguna: currentUserId,
-               aksi: `menambah produk ${productName}`,
+               aksi: `menambah produk ${nama}`,
             },
          });
       }
@@ -86,22 +81,10 @@ export const updateProduct = async (
       const currentUserRole = get(req, 'identity.role');
 
       const { id } = req.params;
-      const {
-         categoryId,
-         productName,
-         capitalPrice,
-         sellingPrice,
-         wholeSalePrice,
-         stock,
-      } = req.body;
+      const { id_kategori, nama, harga_modal, harga_jual, harga_grosir, stok } =
+         req.body;
 
-      if (
-         !id ||
-         !categoryId ||
-         !productName ||
-         !capitalPrice ||
-         !sellingPrice
-      ) {
+      if (!id || !id_kategori || !nama || !harga_modal || !harga_jual) {
          return res.sendStatus(400);
       }
 
@@ -110,12 +93,12 @@ export const updateProduct = async (
             id: Number(id),
          },
          data: {
-            id_kategori: categoryId,
-            nama: productName,
-            harga_modal: capitalPrice,
-            harga_jual: sellingPrice,
-            harga_grosir: wholeSalePrice,
-            stok: stock,
+            id_kategori,
+            nama,
+            harga_modal,
+            harga_jual,
+            harga_grosir,
+            stok,
          },
       });
 
@@ -123,7 +106,7 @@ export const updateProduct = async (
          await prisma.logs.create({
             data: {
                id_pengguna: currentUserId,
-               aksi: `update data produk ${productName}`,
+               aksi: `update data produk ${nama}`,
             },
          });
       }
